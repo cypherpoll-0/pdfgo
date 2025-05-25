@@ -25,7 +25,7 @@ export async function signup(formData: FormData) {
 
   const token = await signJwt({ id: user.id, email: user.email })
 
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
     cookieStore.set('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

@@ -26,7 +26,7 @@ export async function loginUser({ email, password }: LoginParams) {
   const token = await signJwt({ id: user.id, email: user.email })
 
   // ✅ Set secure HTTP-only cookie
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   cookieStore.set('token', token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
