@@ -1,6 +1,7 @@
 // actions/auth.ts
 'use server'
 
+import { cookies } from 'next/headers'
 import { prisma } from '@/lib/prisma'
 import { hashPassword } from '@/lib/hash'
 import { signJwt } from '@/lib/auth'
@@ -23,6 +24,15 @@ export async function signup(formData: FormData) {
   })
 
   const token = await signJwt({ id: user.id, email: user.email })
+
+  const cookieStore = cookies()
+    cookieStore.set('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    })
 
   return {
     user: {
