@@ -1,0 +1,29 @@
+# 📄 pdfgo
+
+
+| Item                     | What we did                                                                                            | Key CLI commands                                                                                                              |
+| ------------------------ | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| **Project bootstrap**    | Created Next.js (App Router, TypeScript) project in `pdfgo/`                                           | `npx create-next-app@latest pdfgo --typescript --app --tailwind --eslint --src-dir --import-alias "@/*"`                      |
+| **Package installs**     | Added Tailwind, Prisma, JWT & bcrypt dev stack                                                         | `npm install -D tailwindcss postcss autoprefixer`<br>`npm install prisma @prisma/client`<br>`npm install jsonwebtoken bcrypt` |
+| **Tailwind init**        | Generated Tailwind & PostCSS configs; imported styles                                                  | `npx tailwindcss init -p`                                                                                                     |
+| **Database (local dev)** | Spun-up PostgreSQL 15 in Docker for WSL                                                                | `docker-compose up -d`                                                                                                        |
+| **Prisma**               | Initialised Prisma, pointed to local DB, ran first migration                                           | `npx prisma init`<br>`npx prisma migrate dev --name init`                                                                     |
+| **Environment**          | Added `.env` with `DATABASE_URL` & `JWT_SECRET`                                                        | —                                                                                                                             |
+| **Auth helpers**         | Implemented password hashing, JWT sign/verify, cookie setter (no code shown)                           | —                                                                                                                             |
+| **Route protection**     | Added global middleware to guard `/dashboard`, `/pdf/*`, etc.                                          | —                                                                                                                             |
+| **Auth screens**         | Built **Signup** & **Login** pages using Server Actions (no code shown)                                | —                                                                                                                             |
+| **Test run**             | Verified signup ➜ cookie set ➜ redirect to dashboard; middleware redirects unauthorized users to login | `npm run dev`                                                                                                                 |
+
+### Folder highlights created today
+
+```
+pdfgo/
+  ├─ docker-compose.yml
+  ├─ prisma/          # schema + (optional) seed
+  └─ src/
+       ├─ app/signup  # page.tsx + actions.ts
+       ├─ app/login   # page.tsx + actions.ts
+       ├─ lib/auth.ts
+       └─ middleware.ts
+```
+

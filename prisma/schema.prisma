@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime? @updatedAt
+
+  pdfs      Pdf[]
+  comments  Comment[]
+}
+
+model Pdf {
+  id         String   @id @default(uuid())
+  title      String
+  path       String
+  ownerId    String
+  owner      User     @relation(fields: [ownerId], references: [id])
+  comments   Comment[]
+  sharedWith ShareLink[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt 
+
+}
+
+model ShareLink {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  pdfId     String
+  pdf       Pdf      @relation(fields: [pdfId], references: [id])
+  expiresAt DateTime?
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  authorId  String?
+  author    User?    @relation(fields: [authorId], references: [id])
+  pdfId     String
+  pdf       Pdf      @relation(fields: [pdfId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt 
+}
