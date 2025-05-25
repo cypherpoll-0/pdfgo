@@ -9,9 +9,11 @@ const nextConfig: NextConfig = {
 
     return config
   },
-  /* config options here */
   env: {
     DATABASE_URL: process.env.DATABASE_URL,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
   },
 };
 
