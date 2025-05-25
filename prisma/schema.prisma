@@ -46,7 +46,7 @@ model Comment {
   authorId  String?
   author    User?    @relation(fields: [authorId], references: [id])
   pdfId     String
-  pdf       Pdf      @relation(fields: [pdfId], references: [id])
+  pdf       Pdf      @relation(fields: [pdfId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt 
 }

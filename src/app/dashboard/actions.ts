@@ -91,3 +91,33 @@ export async function generateShareLink(pdfId: string, userId: string) {
     return { success: false, error: 'Server error' }
   }
 }
+
+export async function deletePdf(pdfId: string, userId: string) {
+  try {
+    // Optional: check if the PDF belongs to the user
+    const pdf = await prisma.pdf.findFirst({
+      where: {
+        id: pdfId,
+        ownerId: userId,
+      },
+    });
+
+    if (!pdf || pdf.ownerId !== userId) {
+      return { success: false, error: 'Unauthorized or PDF not found' }
+    }
+
+    // Optional manual deletion of comments (not needed if onDelete: Cascade is in schema)
+    await prisma.comment.deleteMany({
+      where: { pdfId },
+    })
+
+    await prisma.pdf.delete({
+      where: { id: pdfId },
+    })
+
+    return { success: true }
+  } catch (err: any) {
+    console.error('Delete PDF error:', err)
+    return { success: false, error: err.message || 'Failed to delete PDF' }
+  }
+}

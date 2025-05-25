@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useAppSelector } from '@/lib/hooks'
 import LogoutButton from '@/components/LogoutButton'
 import useAuthRedirect from '@/lib/useAuthRedirect'
-import { getUserPdfs, uploadPdf, generateShareLink } from './actions'
+import { getUserPdfs, uploadPdf, generateShareLink, deletePdf } from './actions'
 import Link from 'next/link'
 
 type Pdf = {
@@ -94,6 +94,21 @@ export default function DashboardPage() {
     }
   }
 
+  async function handleDelete(pdfId: string) {
+    if (!user?.id) {
+      setError("User not authenticated");
+      return;
+    }
+
+    const res = await deletePdf(pdfId, user.id);
+
+    if (!res.success) {
+      setError(res.error);
+    } else {
+      setPdfs(prev => prev.filter(pdf => pdf.id !== pdfId));
+    }
+  }
+
   async function handleShare(pdfId: string) {
     if (!user?.id) {
       setError('User not authenticated')
@@ -158,13 +173,23 @@ export default function DashboardPage() {
                     Uploaded on {new Date(pdf.createdAt).toLocaleString()}
                   </p>
                 </div>
-                <Link
-                  href={`/pdf/${pdf.id}`}
-                  className="text-blue-600 hover:underline"
-                >
-                  View
-                </Link>
+
+                <div className="flex items-center gap-4">
+                  <Link
+                    href={`/pdf/${pdf.id}`}
+                    className="text-blue-600 hover:underline text-sm"
+                  >
+                    View
+                  </Link>
+                  <button
+                    onClick={() => handleDelete(pdf.id)}
+                    className="text-red-600 hover:underline text-sm"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
+
 
               <p className="text-sm mt-2 text-gray-700">
                 💬 {pdf.comments.length} comment(s) | 🔗 Shared with {pdf.sharedWith.length} link(s)
