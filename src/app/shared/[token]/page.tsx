@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
 import { getSharedPdf, addSharedComment } from './actions'
 import PDFViewer from '@/components/PDFViewer' // existing viewer
 import Link from 'next/link'
@@ -12,8 +11,12 @@ type Comment = {
   createdAt: string | Date
 }
 
-export default function SharedPdfPage() {
-  const { token } = useParams<{ token: string }>()
+export default function SharedPdfPage({
+  params,
+}: {
+  params: { token: string }
+}) {
+  const { token } = params
   const [pdfUrl, setPdfUrl] = useState<string | null>(null)
   const [title, setTitle] = useState('')
   const [comments, setComments] = useState<Comment[]>([])
