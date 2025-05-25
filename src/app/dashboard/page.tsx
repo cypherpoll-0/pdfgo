@@ -34,7 +34,7 @@ export default function DashboardPage() {
   useAuthRedirect()
   const { user } = useAppSelector(state => state.auth)
   const [pdfs, setPdfs] = useState<Pdf[]>([])
-  const [error, setError] = useState('')
+  const [error, setError]: any = useState('')
   const [uploading, setUploading] = useState(false)
   const [isClient, setIsClient] = useState(false)
   const [shareLinks, setShareLinks] = useState<Record<string, string>>({})

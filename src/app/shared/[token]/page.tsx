@@ -18,7 +18,7 @@ export default function SharedPdfPage() {
   const [title, setTitle] = useState('')
   const [comments, setComments] = useState<Comment[]>([])
   const [newComment, setNewComment] = useState('')
-  const [error, setError] = useState('')
+  const [error, setError]: any = useState('')
 
   /* initial fetch */
   useEffect(() => {

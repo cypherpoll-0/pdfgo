@@ -8,7 +8,7 @@ import { setUser } from '@/store/slices/authSlice'
 import { useRouter } from 'next/navigation'
 
 export default function SignupPage() {
-  const [error, setError] = useState('')
+  const [error, setError]: any = useState('')
   const dispatch = useAppDispatch()
   const router = useRouter()
 

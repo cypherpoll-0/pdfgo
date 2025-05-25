@@ -30,7 +30,7 @@ export default function PdfViewerPage() {
   const [title, setTitle] = useState('')
   const [comments, setComments] = useState<Comment[]>([])
   const [newComment, setNewComment] = useState('')
-  const [error, setError] = useState('')
+  const [error, setError]: any = useState('')
 
   // Fetch PDF + comments
   useEffect(() => {

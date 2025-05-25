@@ -9,7 +9,7 @@ import { loginUser } from './actions'
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const [error, setError]: any = useState('')
   const [isPending, startTransition] = useTransition()
 
   const dispatch = useAppDispatch()
