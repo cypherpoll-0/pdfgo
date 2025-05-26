@@ -99,8 +99,9 @@ export async function deletePdf(pdfId: string, userId: string) {
     await utapi.deleteFiles(fileKey)
 
     // 🗑️ Delete from DB
-    await prisma.comment.deleteMany({ where: { pdfId } })
-    await prisma.pdf.delete({ where: { id: pdfId } })
+    await prisma.comment.deleteMany({ where: { pdfId } });
+    await prisma.shareLink.deleteMany({ where: { pdfId } });
+    await prisma.pdf.delete({ where: { id: pdfId } });
 
     revalidatePath('/dashboard')
 
