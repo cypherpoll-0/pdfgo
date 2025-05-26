@@ -136,9 +136,6 @@ npx prisma migrate dev
 # Dev server
 npm run dev
 
-# Lint + Format
-npm run lint
-npm run format
 ```
 
 ---
@@ -161,4 +158,3 @@ For questions, reach out via:
 
 * Email: [ayushkedia1990@gmail.com](mailto:ayushkedia1990@gmail.com)
 
-```
