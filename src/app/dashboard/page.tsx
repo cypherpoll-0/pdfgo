@@ -142,17 +142,37 @@ export default function DashboardPage() {
         <LogoutButton />
       </div>
       <form onSubmit={handleUpload} className="mb-6 flex items-center gap-2">
-        <input
-          type="file"
-          name="pdf"
-          accept="application/pdf"
-          required
-          className="border p-2 flex-grow"
-        />
+        <div className="w-full border rounded-md p-2 bg-white shadow-sm flex items-center justify-between">
+          <span id="file-name" className="text-sm text-gray-600 truncate max-w-[70%]">
+            No file chosen
+          </span>
+
+          <div className="flex items-center space-x-2">
+            <input
+              id="pdf"
+              type="file"
+              name="pdf"
+              accept="application/pdf"
+              required
+              className="hidden"
+              onChange={(e) => {
+                const fileName = e.target.files?.[0]?.name || 'No file chosen'
+                document.getElementById('file-name')!.textContent = fileName
+              }}
+            />
+            <label
+              htmlFor="pdf"
+              className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md cursor-pointer hover:bg-blue-700 transition"
+            >
+              Choose PDF
+            </label>
+          </div>
+        </div>
+
         <button
           type="submit"
           disabled={uploading}
-          className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
+          className="bg-blue-600 text-white px-4 py-3.5 rounded disabled:opacity-50 w-40"
         >
           {uploading ? 'Uploading...' : 'Upload PDF'}
         </button>

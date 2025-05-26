@@ -1,12 +1,11 @@
 'use server'
 
 import { prisma } from '@/lib/prisma'
-import { promises as fs } from 'fs'
-import path from 'path'
 import { revalidatePath } from 'next/cache'
 import crypto from 'crypto'
+import { UTApi } from 'uploadthing/server'
 
-const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads')
+const utapi = new UTApi()
 
 export async function uploadPdf(formData: FormData, userId: string) {
   try {
@@ -20,28 +19,36 @@ export async function uploadPdf(formData: FormData, userId: string) {
       return { success: false, error: 'Only PDF files are allowed' }
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer())
+    // Convert the File to an ArrayBuffer
+    const arrayBuffer = await file.arrayBuffer()
 
-    await fs.mkdir(UPLOAD_DIR, { recursive: true })
+    // Create a Blob from the ArrayBuffer
+    const blob = new Blob([arrayBuffer], { type: file.type })
 
-    const fileName = `${Date.now()}_${file.name}`
-    const filePath = path.join(UPLOAD_DIR, fileName)
-    await fs.writeFile(filePath, buffer)
+    // Create a new File object from the Blob
+    const newFile = new File([blob], file.name, { type: file.type })
 
-    const uploadedPdf = await prisma.pdf.create({
+    // Upload the File using UTApi
+    const uploadedFile = await utapi.uploadFiles(newFile)
+
+    if (!uploadedFile || !uploadedFile.data?.url) {
+      return { success: false, error: 'Upload failed at UploadThing' }
+    }
+
+    // Save to the database
+    const pdf = await prisma.pdf.create({
       data: {
         title: file.name,
-        path: `/uploads/${fileName}`,
+        path: uploadedFile.data.url,
         ownerId: userId,
       },
     })
 
     revalidatePath('/dashboard')
-
-    return { success: true, pdf: uploadedPdf }
-  } catch (error) {
+    return { success: true, pdf }
+  } catch (error: any) {
     console.error('Upload error:', error)
-    return { success: false, error: 'Internal Server Error' }
+    return { success: false, error: error.message || 'Upload failed' }
   }
 }
 
@@ -49,13 +56,9 @@ export async function getUserPdfs(userId: string) {
   try {
     const pdfs = await prisma.pdf.findMany({
       where: { ownerId: userId },
-      include: {
-        comments: true,
-        sharedWith: true,
-      },
+      include: { comments: true, sharedWith: true },
       orderBy: { createdAt: 'desc' },
     })
-
     return { pdfs }
   } catch (error) {
     console.error('Error fetching PDFs:', error)
@@ -63,28 +66,17 @@ export async function getUserPdfs(userId: string) {
   }
 }
 
+
 export async function generateShareLink(pdfId: string, userId: string) {
   try {
-    // Make sure the user owns this PDF
-    const pdf = await prisma.pdf.findUnique({
-      where: { id: pdfId },
-    })
-
+    const pdf = await prisma.pdf.findUnique({ where: { id: pdfId } })
     if (!pdf || pdf.ownerId !== userId) {
       return { success: false, error: 'Unauthorized or PDF not found' }
     }
 
     const token = crypto.randomBytes(16).toString('hex')
-
-    await prisma.shareLink.create({
-      data: {
-        token,
-        pdfId,
-      },
-    })
-
+    await prisma.shareLink.create({ data: { token, pdfId } })
     revalidatePath('/dashboard')
-
     return { success: true, token }
   } catch (error) {
     console.error('Error generating share link:', error)
@@ -94,26 +86,23 @@ export async function generateShareLink(pdfId: string, userId: string) {
 
 export async function deletePdf(pdfId: string, userId: string) {
   try {
-    // Optional: check if the PDF belongs to the user
     const pdf = await prisma.pdf.findFirst({
-      where: {
-        id: pdfId,
-        ownerId: userId,
-      },
-    });
+      where: { id: pdfId, ownerId: userId },
+    })
 
-    if (!pdf || pdf.ownerId !== userId) {
+    if (!pdf) {
       return { success: false, error: 'Unauthorized or PDF not found' }
     }
+    const urlParts = pdf.path.split('/')
+    const fileKey = urlParts[urlParts.length - 1]
 
-    // Optional manual deletion of comments (not needed if onDelete: Cascade is in schema)
-    await prisma.comment.deleteMany({
-      where: { pdfId },
-    })
+    await utapi.deleteFiles(fileKey)
 
-    await prisma.pdf.delete({
-      where: { id: pdfId },
-    })
+    // 🗑️ Delete from DB
+    await prisma.comment.deleteMany({ where: { pdfId } })
+    await prisma.pdf.delete({ where: { id: pdfId } })
+
+    revalidatePath('/dashboard')
 
     return { success: true }
   } catch (err: any) {
