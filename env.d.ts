@@ -1,4 +1,3 @@
-// env.d.ts  (in project root)
 declare namespace NodeJS {
   interface ProcessEnv {
     DATABASE_URL: string

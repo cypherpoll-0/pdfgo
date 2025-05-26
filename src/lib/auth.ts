@@ -1,4 +1,3 @@
-// lib/auth.ts
 import { SignJWT, jwtVerify, type JWTPayload } from 'jose'
 import { env } from './env'
 

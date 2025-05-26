@@ -32,14 +32,13 @@ export default function PdfViewerPage() {
   const [newComment, setNewComment] = useState('')
   const [error, setError]: any = useState('')
 
-  // Fetch PDF + comments
   useEffect(() => {
     const fetchPdf = async () => {
       const res = await getPdfById(user?.id ?? null, id)
       if ('error' in res) {
         setError(res.error)
       } else if (res.pdf) {
-        setPdfUrl(res.pdf.path)        // path like /uploads/xxxx.pdf
+        setPdfUrl(res.pdf.path)
         setTitle(res.pdf.title)
         setComments(res.pdf.comments as Comment[])
       }

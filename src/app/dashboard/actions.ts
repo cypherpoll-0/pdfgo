@@ -19,23 +19,18 @@ export async function uploadPdf(formData: FormData, userId: string) {
       return { success: false, error: 'Only PDF files are allowed' }
     }
 
-    // Convert the File to an ArrayBuffer
     const arrayBuffer = await file.arrayBuffer()
 
-    // Create a Blob from the ArrayBuffer
     const blob = new Blob([arrayBuffer], { type: file.type })
 
-    // Create a new File object from the Blob
     const newFile = new File([blob], file.name, { type: file.type })
 
-    // Upload the File using UTApi
     const uploadedFile = await utapi.uploadFiles(newFile)
 
     if (!uploadedFile || !uploadedFile.data?.url) {
       return { success: false, error: 'Upload failed at UploadThing' }
     }
 
-    // Save to the database
     const pdf = await prisma.pdf.create({
       data: {
         title: file.name,
@@ -98,7 +93,6 @@ export async function deletePdf(pdfId: string, userId: string) {
 
     await utapi.deleteFiles(fileKey)
 
-    // 🗑️ Delete from DB
     await prisma.comment.deleteMany({ where: { pdfId } });
     await prisma.shareLink.deleteMany({ where: { pdfId } });
     await prisma.pdf.delete({ where: { id: pdfId } });

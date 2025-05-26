@@ -1,4 +1,3 @@
-// actions/auth.ts
 'use server'
 
 import { cookies } from 'next/headers'
@@ -31,7 +30,7 @@ export async function signup(formData: FormData) {
       secure: process.env.NODE_ENV === 'production',
       path: '/',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7, 
     })
 
   return {

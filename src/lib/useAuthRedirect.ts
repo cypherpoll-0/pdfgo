@@ -1,4 +1,3 @@
-// hooks/useAuthRedirect.ts
 "use client";
 
 import { useEffect } from "react";
@@ -12,7 +11,7 @@ export default function useAuthRedirect() {
 
   useEffect(() => {
     if (!user) {
-      router.replace("/login"); // or wherever your login route is
+      router.replace("/login");
     }
   }, [user, router]);
 }

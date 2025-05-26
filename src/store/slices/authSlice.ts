@@ -15,7 +15,6 @@ const LOCAL_STORAGE_KEY = 'pdfgo_auth'
 
 const getInitialState = (): AuthState => {
   if (typeof window === 'undefined') {
-    // On server, return default
     return { user: null, token: null }
   }
   const saved = localStorage.getItem(LOCAL_STORAGE_KEY)

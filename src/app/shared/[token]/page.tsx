@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { getSharedPdf, addSharedComment } from './actions'
-import PDFViewer from '@/components/PDFViewer' // existing viewer
+import PDFViewer from '@/components/PDFViewer'
 import Link from 'next/link'
 
 type Comment = {

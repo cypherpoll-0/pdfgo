@@ -1,4 +1,3 @@
-// app/signup/page.tsx
 'use client'
 
 import { useState } from 'react'
@@ -6,6 +5,7 @@ import { signup } from './actions'
 import { useAppDispatch } from '@/lib/hooks'
 import { setUser } from '@/store/slices/authSlice'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function SignupPage() {
   const [error, setError]: any = useState('')
@@ -35,6 +35,12 @@ export default function SignupPage() {
         <input name="password" type="password" placeholder="Password" required className="p-2 border rounded" />
         {error && <p className="text-red-500 text-sm">{error}</p>}
         <button type="submit" className="bg-blue-600 text-white p-2 rounded">Create Account</button>
+        <Link
+          href={`/login`}
+          className="text-blue-600 hover:underline text-sm self-center"
+        >
+          Have an account already? Log in
+        </Link>
       </form>
     </div>
   )

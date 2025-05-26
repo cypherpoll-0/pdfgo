@@ -1,6 +1,6 @@
 'use client'
 
-import '@/styles/globals.css' // Import your Tailwind CSS global styles
+import '@/styles/globals.css' 
 import { Provider } from 'react-redux'
 import store from '@/store'
 

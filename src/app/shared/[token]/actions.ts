@@ -39,7 +39,7 @@ export async function addSharedComment(token: string, content: string) {
       data: {
         content: content.trim(),
         pdfId: link.pdfId,
-        authorId: null, // guest
+        authorId: null, 
       },
     })
 
